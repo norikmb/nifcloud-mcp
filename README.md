@@ -5,6 +5,8 @@ FJcloud-V の API と対話するためのモデル コンテキスト プロト
 
 ## 利用可能なTool
 
+※現状はの主要サービスのREAD中心に実装しています。
+
 | Tool 名 | 説明 | 必須パラメータ |
 |-----------|-------------|---------------------|
 | `get_server_list` | すべてのサーバーのリストを取得します | None |
@@ -14,9 +16,9 @@ FJcloud-V の API と対話するためのモデル コンテキスト プロト
 | `get_router_list` | すべてのルーターのリストを取得します | None |
 | `get_db_list` | すべてのRDBのリストを取得します | None |
 
-## Clineとの統合
+## Clineとの統合方法
 
-以下の内容をcline_mcp_settings.jsonに記載する
+以下の内容をcline_mcp_settings.jsonに記載します
 
 ```
 {
@@ -25,13 +27,36 @@ FJcloud-V の API と対話するためのモデル コンテキスト プロト
       "command": "uv",
       "args": [
         "--directory",
-        "/home/kambe/nifcloud-mcp",　 <!-- ←ここはgit clone 先のディレクトリを指定-->
+        "/home/kambe/workspace/nifcloud-mcp",  // ←ここはgit clone 先のディレクトリを指定
         "run",
         "mcp",
         "run",
-        "server.py"
+        "src/server.py"
       ]
     }
   }
+}
+```
+
+## Github Copilot Chatとの統合方法
+
+以下の内容を.vscode/mcp.jsonに以下の内容を記載します
+
+```
+{
+    "servers": {
+        "nifcloud_mcp": {
+            "type": "stdio",
+            "command": "uv",
+            "args": [
+                "--directory",
+                "/home/kambe/workspace/nifcloud-mcp",  // ←ここはgit clone 先のディレクトリを指定
+                "run",
+                "mcp",
+                "run",
+                "src/server.py"
+            ]
+        }
+    }
 }
 ```
