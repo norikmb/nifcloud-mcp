@@ -16,6 +16,12 @@ FJcloud-V の API と対話するためのモデル コンテキスト プロト
 | `get_router_list` | すべてのルーターのリストを取得します | None |
 | `get_db_list` | すべてのRDBのリストを取得します | None |
 
+## 導入方法
+
+uv を利用しています。インストールしてない場合は各自の環境にインストールしてください。
+
+https://docs.astral.sh/uv/getting-started/installation/
+
 ## Clineとの統合方法
 
 以下の内容をcline_mcp_settings.jsonに記載します
