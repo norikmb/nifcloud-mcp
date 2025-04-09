@@ -1,0 +1,17 @@
+{
+    "servers": {
+        "nifcloud_mcp": {
+            "type": "stdio",
+            "command": "uv",
+            "args": [
+                "--directory",
+                "/home/kambe/workspace/nifcloud-mcp",  //  ←ここはgit clone 先のディレクトリを指定
+                "run",
+                "mcp",
+                "run",
+                "src/server.py"
+            ]
+        }
+    }
+}
+
