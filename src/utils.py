@@ -1,9 +1,13 @@
+import logging
 import re
 from typing import Any, TypeVar
 
 from nifcloud import session
 
 from settings import Settings
+
+# Configure logging
+logger = logging.getLogger(__name__)
 
 T = TypeVar("T")
 
@@ -40,14 +44,26 @@ def get_nifcloud_client(service: str):
     
     Returns:
         A Nifcloud client instance
+    
+    Raises:
+        ValueError: If configuration is missing or invalid
     """
-    settings = Settings()
-    return session.get_session().create_client(
-        service,
-        region_name=settings.NIFCLOUD_DEFAULT_REGION,
-        nifcloud_access_key_id=settings.NIFCLOUD_ACCESS_KEY_ID.get_secret_value(),
-        nifcloud_secret_access_key=settings.NIFCLOUD_SECRET_ACCESS_KEY.get_secret_value(),
-    )
+    try:
+        settings = Settings()
+        client = session.get_session().create_client(
+            service,
+            region_name=settings.NIFCLOUD_DEFAULT_REGION,
+            nifcloud_access_key_id=settings.NIFCLOUD_ACCESS_KEY_ID.get_secret_value(),
+            nifcloud_secret_access_key=settings.NIFCLOUD_SECRET_ACCESS_KEY.get_secret_value(),
+        )
+        logger.debug(f"Created client for service: {service}")
+        return client
+    except ValueError as e:
+        logger.error(f"Failed to create client for service {service}: {e}")
+        raise ValueError(f"Failed to create Nifcloud client: {e}") from e
+    except Exception as e:
+        logger.error(f"Unexpected error creating client for service {service}: {e}")
+        raise
 
 
 def call_nifcloud_api(
@@ -65,10 +81,37 @@ def call_nifcloud_api(
         Parsed response object of the specified type
     
     Raises:
-        Exception: If the API call fails
+        ValueError: If client creation fails
+        AttributeError: If the API method does not exist
+        Exception: If the API call fails or response parsing fails
     """
-    client = get_nifcloud_client(service)
-    api_func = getattr(client, api_method)
-    response = api_func()
-    converted_response = convert_keys_to_snake_case(response)
-    return response_type(**converted_response)
+    try:
+        logger.info(f"Calling {service}.{api_method}()")
+        client = get_nifcloud_client(service)
+        
+        # Get the API method
+        if not hasattr(client, api_method):
+            logger.error(f"API method '{api_method}' not found in service '{service}'")
+            raise AttributeError(f"Service '{service}' has no method '{api_method}'")
+        
+        api_func = getattr(client, api_method)
+        
+        # Call the API
+        response = api_func()
+        logger.debug(f"Received response from {service}.{api_method}()")
+        
+        # Convert and parse response
+        converted_response = convert_keys_to_snake_case(response)
+        result = response_type(**converted_response)
+        logger.info(f"Successfully processed response from {service}.{api_method}()")
+        return result
+        
+    except AttributeError as e:
+        logger.error(f"API method error: {e}")
+        raise
+    except ValueError as e:
+        logger.error(f"Configuration error: {e}")
+        raise
+    except Exception as e:
+        logger.error(f"Error calling {service}.{api_method}(): {type(e).__name__}: {e}")
+        raise
