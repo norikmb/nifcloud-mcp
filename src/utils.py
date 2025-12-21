@@ -67,7 +67,7 @@ def get_nifcloud_client(service: str):
 
 
 def call_nifcloud_api(
-    service: str, api_method: str, response_type: type[T]
+    service: str, api_method: str, response_type: type[T], **kwargs
 ) -> T:
     """
     Generic helper to call Nifcloud API and convert response.
@@ -76,6 +76,7 @@ def call_nifcloud_api(
         service: The service name (e.g., 'computing', 'rdb')
         api_method: The API method name (e.g., 'describe_instances')
         response_type: The Pydantic model type for the response
+        **kwargs: Optional keyword arguments to pass to the API method
     
     Returns:
         Parsed response object of the specified type
@@ -96,8 +97,12 @@ def call_nifcloud_api(
         
         api_func = getattr(client, api_method)
         
-        # Call the API
-        response = api_func()
+        # Call the API with optional arguments
+        if kwargs:
+            logger.debug(f"Calling with parameters: {list(kwargs.keys())}")
+            response = api_func(**kwargs)
+        else:
+            response = api_func()
         logger.debug(f"Received response from {service}.{api_method}()")
         
         # Convert and parse response
