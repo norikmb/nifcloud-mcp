@@ -4,17 +4,17 @@ from typing import Optional
 
 from mcp.server.fastmcp import FastMCP
 
-from types_nifcloud.describe_db_instances_response import DescribeDBInstancesResponse
-from types_nifcloud.describe_instances_response import DescribeInstancesResponse
-from types_nifcloud.describe_load_balancers_response import (
+from .types_nifcloud.describe_db_instances_response import DescribeDBInstancesResponse
+from .types_nifcloud.describe_instances_response import DescribeInstancesResponse
+from .types_nifcloud.describe_load_balancers_response import (
     DescribeLoadBalancersResponse,
 )
-from types_nifcloud.describe_volumes_response import DescribeVolumesResponse
-from types_nifcloud.nifty_describe_routers_response import NiftyDescribeRoutersResponse
-from types_nifcloud.describe_security_groups_response import (
+from .types_nifcloud.describe_volumes_response import DescribeVolumesResponse
+from .types_nifcloud.nifty_describe_routers_response import NiftyDescribeRoutersResponse
+from .types_nifcloud.describe_security_groups_response import (
     DescribeSecurityGroupsResponse,
 )
-from utils import call_nifcloud_api
+from .utils import call_nifcloud_api
 
 # Configure logging with structured format
 logging.basicConfig(

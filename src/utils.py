@@ -4,7 +4,7 @@ from typing import Any, TypeVar
 
 from nifcloud import session
 
-from settings import Settings
+from .settings import Settings
 
 # Configure logging
 logger = logging.getLogger(__name__)
